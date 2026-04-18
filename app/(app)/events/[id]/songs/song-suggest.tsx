@@ -27,6 +27,69 @@ export function SongSuggest({
   existingTitles: string[]
 }) {
   const [open, setOpen] = useState(false)
+  const [modalKey, setModalKey] = useState(0)
+
+  function openModal() {
+    setModalKey((k) => k + 1)
+    setOpen(true)
+  }
+
+  function closeModal() {
+    setOpen(false)
+  }
+
+  return (
+    <>
+      {/* Trigger button */}
+      <button
+        onClick={openModal}
+        className="flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-900/40 transition hover:bg-violet-500 active:scale-95"
+      >
+        <Plus size={16} />
+        Sugerir
+      </button>
+
+      {/* Modal */}
+      {open && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+          onClick={(e) => { if (e.target === e.currentTarget) closeModal() }}
+        >
+          <div className="w-full max-w-md rounded-2xl bg-neutral-900 border border-neutral-700/60 shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-800">
+              <p className="font-semibold text-neutral-100">Sugerir canción</p>
+              <button onClick={closeModal} className="rounded-lg p-1.5 text-neutral-500 hover:text-neutral-200 hover:bg-neutral-800 transition">
+                <X size={17} />
+              </button>
+            </div>
+
+            {/* key forces remount → resets useFormState on every open */}
+            <ModalContent
+              key={modalKey}
+              eventId={eventId}
+              hasSpotify={hasSpotify}
+              existingSpotifyUrls={existingSpotifyUrls}
+              onClose={closeModal}
+            />
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+
+function ModalContent({
+  eventId,
+  hasSpotify,
+  existingSpotifyUrls,
+  onClose,
+}: {
+  eventId: string
+  hasSpotify: boolean
+  existingSpotifyUrls: string[]
+  onClose: () => void
+}) {
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<Track[]>([])
   const [searching, setSearching] = useState(false)
@@ -39,25 +102,16 @@ export function SongSuggest({
   const boundAction = suggestSong.bind(null, eventId)
   const [state, formAction] = useFormState<SuggestState, FormData>(boundAction, {})
 
-  // Auto-focus when modal opens
   useEffect(() => {
-    if (open) setTimeout(() => inputRef.current?.focus(), 50)
-  }, [open])
+    setTimeout(() => inputRef.current?.focus(), 50)
+  }, [])
 
-  // Close on success
   useEffect(() => {
     if (state.success) {
-      setTimeout(close, 1200)
+      const t = setTimeout(onClose, 1200)
+      return () => clearTimeout(t)
     }
-  }, [state.success])
-
-  function close() {
-    setOpen(false)
-    setQuery("")
-    setResults([])
-    setSelected(null)
-    stopAudio()
-  }
+  }, [state.success, onClose])
 
   function stopAudio() {
     audioRef.current?.pause()
@@ -98,31 +152,6 @@ export function SongSuggest({
   }
 
   return (
-    <>
-      {/* Trigger button */}
-      <button
-        onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-900/40 transition hover:bg-violet-500 active:scale-95"
-      >
-        <Plus size={16} />
-        Sugerir
-      </button>
-
-      {/* Modal */}
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
-          onClick={(e) => { if (e.target === e.currentTarget) close() }}
-        >
-          <div className="w-full max-w-md rounded-2xl bg-neutral-900 border border-neutral-700/60 shadow-2xl overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-800">
-              <p className="font-semibold text-neutral-100">Sugerir canción</p>
-              <button onClick={close} className="rounded-lg p-1.5 text-neutral-500 hover:text-neutral-200 hover:bg-neutral-800 transition">
-                <X size={17} />
-              </button>
-            </div>
-
             <div className="p-5 space-y-4 max-h-[70vh] overflow-y-auto">
               {/* Feedback */}
               {state.success && (
@@ -259,10 +288,6 @@ export function SongSuggest({
                 </form>
               )}
             </div>
-          </div>
-        </div>
-      )}
-    </>
   )
 }
 
