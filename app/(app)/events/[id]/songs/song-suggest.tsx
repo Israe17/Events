@@ -1,6 +1,7 @@
 "use client"
 
-import { useActionState, useRef, useState } from "react"
+import { useRef, useState } from "react"
+import { useFormState, useFormStatus } from "react-dom"
 import { Search, Music2, Loader2, Plus, X, Play, Pause, Check, AlertCircle } from "lucide-react"
 import { suggestSong, type SuggestState } from "./actions"
 
@@ -36,7 +37,7 @@ export function SongSuggest({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const boundAction = suggestSong.bind(null, eventId)
-  const [state, formAction, isPending] = useActionState<SuggestState, FormData>(boundAction, {})
+  const [state, formAction] = useFormState<SuggestState, FormData>(boundAction, {})
 
   function close() {
     setOpen(false)
@@ -234,13 +235,7 @@ export function SongSuggest({
                 </button>
               </div>
 
-              <button
-                type="submit"
-                disabled={isPending}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-700 py-3 text-sm font-semibold text-white transition hover:bg-green-600 active:scale-95 disabled:opacity-50"
-              >
-                {isPending ? <Loader2 size={15} className="animate-spin" /> : <><Check size={15} /> Confirmar sugerencia</>}
-              </button>
+              <SubmitButton label="Confirmar sugerencia" className="bg-green-700 hover:bg-green-600" />
             </form>
           )}
         </>
@@ -253,12 +248,22 @@ export function SongSuggest({
             className="w-full rounded-xl bg-neutral-800 border border-neutral-700 px-4 py-2.5 text-sm text-neutral-100 placeholder-neutral-500 outline-none focus:border-violet-500 transition" />
           <input name="spotify_url" type="url" placeholder="Link de Spotify (opcional)"
             className="w-full rounded-xl bg-neutral-800 border border-neutral-700 px-4 py-2.5 text-sm text-neutral-100 placeholder-neutral-500 outline-none focus:border-violet-500 transition" />
-          <button type="submit" disabled={isPending}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-semibold text-white transition hover:bg-violet-500 active:scale-95 disabled:opacity-50">
-            {isPending ? <Loader2 size={15} className="animate-spin" /> : "Sugerir"}
-          </button>
+          <SubmitButton label="Sugerir" className="bg-violet-600 hover:bg-violet-500" />
         </form>
       )}
     </div>
+  )
+}
+
+function SubmitButton({ label, className }: { label: string; className: string }) {
+  const { pending } = useFormStatus()
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-white transition active:scale-95 disabled:opacity-50 ${className}`}
+    >
+      {pending ? <Loader2 size={15} className="animate-spin" /> : <><Check size={15} />{label}</>}
+    </button>
   )
 }
