@@ -2,7 +2,8 @@
 
 import { useRef, useState, useEffect } from "react"
 import { useFormState, useFormStatus } from "react-dom"
-import { Search, Music2, Loader2, Plus, X, Play, Pause, Check, AlertCircle } from "lucide-react"
+import { Music2, Loader2, Plus, X, Play, Pause, Check, AlertCircle } from "lucide-react"
+import { SpotifyIcon } from "@/components/ui/spotify-icon"
 import { suggestSong, type SuggestState } from "./actions"
 
 type Track = {
@@ -57,8 +58,16 @@ export function SongSuggest({
         >
           <div className="w-full max-w-md rounded-2xl bg-neutral-900 border border-neutral-700/60 shadow-2xl overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-800">
-              <p className="font-semibold text-neutral-100">Sugerir canción</p>
+            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-neutral-800">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <p className="font-semibold text-neutral-100">Sugerir canción</p>
+                {hasSpotify && (
+                  <span className="flex items-center gap-1.5 rounded-full bg-[#1DB954]/10 ring-1 ring-[#1DB954]/25 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-[#1DB954]">
+                    <SpotifyIcon size={10} />
+                    Spotify
+                  </span>
+                )}
+              </div>
               <button onClick={closeModal} className="rounded-lg p-1.5 text-neutral-500 hover:text-neutral-200 hover:bg-neutral-800 transition">
                 <X size={17} />
               </button>
@@ -171,7 +180,7 @@ function ModalContent({
                 <>
                   {/* Search */}
                   <div className="relative">
-                    <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none" />
+                    <SpotifyIcon size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       ref={inputRef}
                       value={query}
@@ -273,7 +282,11 @@ function ModalContent({
                   )}
 
                   {!query && !selected && (
-                    <p className="text-center text-xs text-neutral-600 py-2">Escribe para buscar en Spotify</p>
+                    <div className="flex items-center justify-center gap-1.5 py-2 text-xs text-neutral-600">
+                      Escribe para buscar en
+                      <SpotifyIcon size={12} />
+                      <span className="font-semibold text-[#1DB954]/80">Spotify</span>
+                    </div>
                   )}
                 </>
               ) : (
