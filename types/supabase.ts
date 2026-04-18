@@ -7,9 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
   public: {
     Tables: {
       event_applications: {
@@ -64,29 +61,7 @@ export type Database = {
           source?: string | null
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "event_applications_applicant_user_id_fkey"
-            columns: ["applicant_user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_applications_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_applications_reviewed_by_fkey"
-            columns: ["reviewed_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       event_checkins: {
         Row: {
@@ -119,29 +94,7 @@ export type Database = {
           scan_number?: number
           scanned_by?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "event_checkins_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_checkins_invitation_id_fkey"
-            columns: ["invitation_id"]
-            isOneToOne: false
-            referencedRelation: "event_invitations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_checkins_scanned_by_fkey"
-            columns: ["scanned_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       event_gift_reservations: {
         Row: {
@@ -165,29 +118,7 @@ export type Database = {
           invitation_id?: string
           reserved_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "event_gift_reservations_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_gift_reservations_gift_id_fkey"
-            columns: ["gift_id"]
-            isOneToOne: false
-            referencedRelation: "event_gifts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_gift_reservations_invitation_id_fkey"
-            columns: ["invitation_id"]
-            isOneToOne: true
-            referencedRelation: "event_invitations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       event_gifts: {
         Row: {
@@ -229,15 +160,7 @@ export type Database = {
           sort_order?: number
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "event_gifts_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       event_invitations: {
         Row: {
@@ -306,36 +229,7 @@ export type Database = {
           updated_at?: string
           used_entries?: number
         }
-        Relationships: [
-          {
-            foreignKeyName: "event_invitations_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: false
-            referencedRelation: "event_applications"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_invitations_approved_by_fkey"
-            columns: ["approved_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_invitations_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_invitations_holder_user_id_fkey"
-            columns: ["holder_user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       event_media: {
         Row: {
@@ -383,29 +277,7 @@ export type Database = {
           uploaded_by_invitation_id?: string | null
           uploaded_by_user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "event_media_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_media_uploaded_by_invitation_id_fkey"
-            columns: ["uploaded_by_invitation_id"]
-            isOneToOne: false
-            referencedRelation: "event_invitations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_media_uploaded_by_user_id_fkey"
-            columns: ["uploaded_by_user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       event_messages: {
         Row: {
@@ -432,29 +304,7 @@ export type Database = {
           message?: string
           user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "event_messages_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_messages_invitation_id_fkey"
-            columns: ["invitation_id"]
-            isOneToOne: false
-            referencedRelation: "event_invitations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_messages_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       event_song_suggestions: {
         Row: {
@@ -502,29 +352,7 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "event_song_suggestions_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_song_suggestions_suggested_by_invitation_id_fkey"
-            columns: ["suggested_by_invitation_id"]
-            isOneToOne: false
-            referencedRelation: "event_invitations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_song_suggestions_suggested_by_user_id_fkey"
-            columns: ["suggested_by_user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       event_song_votes: {
         Row: {
@@ -548,29 +376,7 @@ export type Database = {
           invitation_id?: string
           song_suggestion_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "event_song_votes_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_song_votes_invitation_id_fkey"
-            columns: ["invitation_id"]
-            isOneToOne: false
-            referencedRelation: "event_invitations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_song_votes_song_suggestion_id_fkey"
-            columns: ["song_suggestion_id"]
-            isOneToOne: false
-            referencedRelation: "event_song_suggestions"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       event_users: {
         Row: {
@@ -594,22 +400,7 @@ export type Database = {
           role?: Database["public"]["Enums"]["user_role_event"]
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "event_users_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       events: {
         Row: {
@@ -666,15 +457,7 @@ export type Database = {
           venue_address?: string | null
           venue_name?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "events_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -742,7 +525,20 @@ export type Database = {
       }
     }
     Functions: {
+      approve_application: {
+        Args: {
+          p_application_id: string
+          p_approved_by?: string
+          p_holder_must_enter_first?: boolean
+          p_max_entries?: number
+        }
+        Returns: { invitation_id: string; message: string; success: boolean }[]
+      }
       bootstrap_event_demo_for_latest_user: { Args: never; Returns: string }
+      cancel_gift_reservation: {
+        Args: { p_invitation_id: string; p_reservation_id: string }
+        Returns: { message: string; success: boolean }[]
+      }
       consume_invitation_entry: {
         Args: {
           p_guest_name?: string
@@ -759,29 +555,13 @@ export type Database = {
           used_entries: number
         }[]
       }
-      reserve_gift: {
-        Args: {
-          p_gift_id: string
-          p_invitation_id: string
-        }
-        Returns: {
-          success: boolean
-          message: string
-          reservation_id: string | null
-        }[]
+      reject_application: {
+        Args: { p_application_id: string; p_notes?: string; p_rejected_by?: string }
+        Returns: { message: string; success: boolean }[]
       }
-      approve_application: {
-        Args: {
-          p_application_id: string
-          p_max_entries?: number
-          p_holder_must_enter_first?: boolean
-          p_approved_by: string
-        }
-        Returns: {
-          success: boolean
-          message: string
-          invitation_id: string | null
-        }[]
+      reserve_gift: {
+        Args: { p_gift_id: string; p_invitation_id: string }
+        Returns: { message: string; reservation_id: string; success: boolean }[]
       }
     }
     Enums: {
@@ -805,98 +585,16 @@ type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
-    }
-    ? R
-    : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
-    : never
+  T extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"]),
+> = (DefaultSchema["Tables"] & DefaultSchema["Views"])[T] extends { Row: infer R } ? R : never
 
-export type TablesInsert<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
-    : never
+export type TablesInsert<T extends keyof DefaultSchema["Tables"]> =
+  DefaultSchema["Tables"][T] extends { Insert: infer I } ? I : never
 
-export type TablesUpdate<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
-    }
-    ? U
-    : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
-    : never
+export type TablesUpdate<T extends keyof DefaultSchema["Tables"]> =
+  DefaultSchema["Tables"][T] extends { Update: infer U } ? U : never
 
-export type Enums<
-  DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
-> = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
+export type Enums<T extends keyof DefaultSchema["Enums"]> = DefaultSchema["Enums"][T]
 
 export const Constants = {
   public: {
