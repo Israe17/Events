@@ -61,12 +61,6 @@ export function SongSuggest({
             <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-neutral-800">
               <div className="flex items-center gap-2.5 min-w-0">
                 <p className="font-semibold text-neutral-100">Sugerir canción</p>
-                {hasSpotify && (
-                  <span className="flex items-center gap-1.5 rounded-full bg-[#1DB954]/10 ring-1 ring-[#1DB954]/25 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-[#1DB954]">
-                    <SpotifyIcon size={10} />
-                    Spotify
-                  </span>
-                )}
               </div>
               <button onClick={closeModal} className="rounded-lg p-1.5 text-neutral-500 hover:text-neutral-200 hover:bg-neutral-800 transition">
                 <X size={17} />
@@ -283,9 +277,7 @@ function ModalContent({
 
                   {!query && !selected && (
                     <div className="flex items-center justify-center gap-1.5 py-2 text-xs text-neutral-600">
-                      Escribe para buscar en
-                      <SpotifyIcon size={12} />
-                      <span className="font-semibold text-[#1DB954]/80">Spotify</span>
+                      Busca una canción o artista
                     </div>
                   )}
                 </>
