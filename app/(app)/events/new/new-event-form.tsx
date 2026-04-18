@@ -1,6 +1,8 @@
 "use client"
 
-import { useRef, useState, useTransition } from "react"
+import { useState, useTransition } from "react"
+import { AlertCircle, Loader2, PartyPopper, FileText, Calendar, MapPin, Building2 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import { createEvent } from "../actions"
 
 function Field({
@@ -9,48 +11,23 @@ function Field({
   type = "text",
   required,
   placeholder,
+  icon: Icon,
 }: {
   label: string
   name: string
   type?: string
   required?: boolean
   placeholder?: string
+  icon?: LucideIcon
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-neutral-300">
+      <label className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-400">
+        {Icon && <Icon size={11} />}
         {label}
-        {required && <span className="ml-0.5 text-violet-400">*</span>}
+        {required && <span className="text-violet-400">*</span>}
       </label>
-      <input
-        type={type}
-        name={name}
-        required={required}
-        placeholder={placeholder}
-        className="w-full rounded-xl bg-neutral-800 border border-neutral-700 px-4 py-3 text-sm text-neutral-100 placeholder-neutral-500 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition"
-      />
-    </div>
-  )
-}
-
-function TextAreaField({
-  label,
-  name,
-  placeholder,
-}: {
-  label: string
-  name: string
-  placeholder?: string
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-neutral-300">{label}</label>
-      <textarea
-        name={name}
-        rows={3}
-        placeholder={placeholder}
-        className="w-full resize-none rounded-xl bg-neutral-800 border border-neutral-700 px-4 py-3 text-sm text-neutral-100 placeholder-neutral-500 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition"
-      />
+      <input type={type} name={name} required={required} placeholder={placeholder} className="input" />
     </div>
   )
 }
@@ -58,7 +35,6 @@ function TextAreaField({
 export function NewEventForm() {
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
-  const formRef = useRef<HTMLFormElement>(null)
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -74,35 +50,42 @@ export function NewEventForm() {
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 pb-10">
-      <Field label="Nombre del evento" name="title" required placeholder="Ej: Cumpleaños de Ana" />
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <Field label="Nombre del evento" name="title" required placeholder="Ej: Cumpleaños de Ana" icon={PartyPopper} />
 
-      <TextAreaField
-        label="Descripción"
-        name="description"
-        placeholder="Descripción breve del evento (opcional)"
-      />
-
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Inicio" name="starts_at" type="datetime-local" required />
-        <Field label="Fin" name="ends_at" type="datetime-local" />
+      <div>
+        <label className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-400">
+          <FileText size={11} /> Descripción
+        </label>
+        <textarea
+          name="description"
+          rows={3}
+          placeholder="Descripción breve del evento (opcional)"
+          className="input resize-none"
+        />
       </div>
 
-      <Field label="Lugar / Venue" name="venue_name" placeholder="Ej: Casa de eventos La Paloma" />
-      <Field label="Ciudad" name="city" placeholder="Ej: Ciudad de México" />
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Inicio" name="starts_at" type="datetime-local" required icon={Calendar} />
+        <Field label="Fin" name="ends_at" type="datetime-local" icon={Calendar} />
+      </div>
+
+      <Field label="Lugar / Venue" name="venue_name" placeholder="Ej: Casa La Paloma" icon={Building2} />
+      <Field label="Ciudad" name="city" placeholder="Ej: Ciudad de México" icon={MapPin} />
 
       {error && (
-        <p className="rounded-xl bg-red-900/30 border border-red-800 px-4 py-3 text-sm text-red-400">
-          {error}
-        </p>
+        <div className="flex items-start gap-2 rounded-xl bg-red-900/20 border border-red-800/50 px-4 py-3 text-sm text-red-300">
+          <AlertCircle size={14} className="mt-0.5 shrink-0" />
+          <span>{error}</span>
+        </div>
       )}
 
       <button
         type="submit"
         disabled={isPending}
-        className="w-full rounded-xl bg-violet-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-violet-500 active:scale-95 disabled:opacity-50"
+        className="btn-brand flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold text-white disabled:opacity-50"
       >
-        {isPending ? "Creando…" : "Crear evento"}
+        {isPending ? <Loader2 size={15} className="animate-spin" /> : "Crear evento"}
       </button>
     </form>
   )

@@ -1,16 +1,24 @@
 import { notFound, redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, CalendarDays, MapPin } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
+import { EventTabs } from "@/components/event-tabs"
+import { StatusPill, type StatusVariant } from "@/components/ui/status-pill"
 
-const EVENT_TABS = [
-  { href: "", label: "Resumen" },
-  { href: "/invitations", label: "Invitaciones" },
-  { href: "/checkin", label: "Check-in" },
-  { href: "/gifts", label: "Regalos" },
-  { href: "/songs", label: "Canciones" },
-]
+const STATUS_LABEL: Record<string, string> = {
+  draft: "Borrador",
+  published: "Publicado",
+  closed: "Cerrado",
+  cancelled: "Cancelado",
+}
+
+const STATUS_VARIANT: Record<string, StatusVariant> = {
+  draft: "neutral",
+  published: "brand",
+  closed: "muted",
+  cancelled: "danger",
+}
 
 export default async function EventLayout({
   children,
@@ -38,47 +46,73 @@ export default async function EventLayout({
 
   if (!raw) notFound()
 
-  const event = (raw as { role: string; event: { id: string; title: string; event_status: string; starts_at: string | null; venue_name: string | null; city: string | null } }).event
+  const event = (raw as {
+    role: string
+    event: {
+      id: string
+      title: string
+      event_status: string
+      starts_at: string | null
+      venue_name: string | null
+      city: string | null
+    }
+  }).event
+
+  const variant = STATUS_VARIANT[event.event_status] ?? "neutral"
+  const label = STATUS_LABEL[event.event_status] ?? event.event_status
 
   return (
-    <div className="flex flex-col">
-      {/* Header */}
-      <div className="sticky top-0 z-40 bg-neutral-950/95 backdrop-blur border-b border-neutral-800 px-4 py-3">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/events"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-800 text-neutral-300 transition hover:bg-neutral-700"
-          >
-            <ArrowLeft size={16} />
-          </Link>
-          <div className="min-w-0">
-            <p className="truncate font-semibold text-neutral-100 leading-tight">{event.title}</p>
-            {event.starts_at && (
-              <p className="text-xs text-neutral-500">
-                {new Date(event.starts_at).toLocaleDateString("es-MX", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}
-              </p>
-            )}
-          </div>
-        </div>
+    <div>
+      {/* Gradient header */}
+      <div className="relative overflow-hidden">
+        {/* Gradient background */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-violet-600/25 via-fuchsia-600/10 to-transparent" />
+        <div className="pointer-events-none absolute -top-24 left-1/2 h-48 w-[120%] -translate-x-1/2 rounded-full bg-violet-600/15 blur-3xl" />
 
-        {/* Sub-tabs */}
-        <div className="-mx-4 mt-3 flex overflow-x-auto px-4 scrollbar-hide">
-          {EVENT_TABS.map((tab) => (
+        <div className="relative px-4 pb-4 pt-6 space-y-4">
+          {/* Back + title */}
+          <div className="flex items-start gap-3">
             <Link
-              key={tab.href}
-              href={`/events/${id}${tab.href}`}
-              className="shrink-0 border-b-2 border-transparent px-4 pb-2 text-sm text-neutral-400 whitespace-nowrap transition hover:text-neutral-200"
+              href="/events"
+              className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-neutral-800/80 text-neutral-300 backdrop-blur transition hover:bg-neutral-700 hover:text-neutral-100"
             >
-              {tab.label}
+              <ArrowLeft size={16} />
             </Link>
-          ))}
+
+            <div className="min-w-0 flex-1">
+              <div className="mb-1.5">
+                <StatusPill variant={variant}>{label}</StatusPill>
+              </div>
+              <h1 className="truncate text-2xl font-bold tracking-tight text-neutral-50">
+                {event.title}
+              </h1>
+              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-neutral-400">
+                {event.starts_at && (
+                  <span className="inline-flex items-center gap-1">
+                    <CalendarDays size={12} />
+                    {new Date(event.starts_at).toLocaleDateString("es-MX", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </span>
+                )}
+                {(event.venue_name || event.city) && (
+                  <span className="inline-flex items-center gap-1">
+                    <MapPin size={12} />
+                    {[event.venue_name, event.city].filter(Boolean).join(" · ")}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <EventTabs eventId={id} />
         </div>
       </div>
 
+      {/* Content */}
       <div className="px-4 pt-4">{children}</div>
     </div>
   )
