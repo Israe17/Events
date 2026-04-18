@@ -14,8 +14,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!user) redirect("/login")
 
   return (
-    <div className="flex flex-col min-h-dvh pt-safe">
-      <main className="flex-1 overflow-y-auto pb-24">{children}</main>
+    <div className="relative flex min-h-dvh flex-col pt-safe">
+      <main className="flex-1 pb-32">{children}</main>
       <BottomNav />
     </div>
   )

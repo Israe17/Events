@@ -3,20 +3,11 @@ import { cookies } from "next/headers"
 import Link from "next/link"
 import { createClient } from "@/utils/supabase/server"
 import type { Tables } from "@/types/supabase"
-import { CalendarDays, MapPin, QrCode, Users, Gift, Music } from "lucide-react"
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Borrador",
-  published: "Publicado",
-  closed: "Cerrado",
-  cancelled: "Cancelado",
-}
-const STATUS_COLOR: Record<string, string> = {
-  draft: "bg-neutral-700 text-neutral-300",
-  published: "bg-green-900/30 text-green-400",
-  closed: "bg-neutral-700 text-neutral-400",
-  cancelled: "bg-red-900/30 text-red-400",
-}
+import { StatCard } from "@/components/ui/stat-card"
+import { SectionHeader } from "@/components/ui/section-header"
+import {
+  CalendarDays, MapPin, QrCode, Users, Gift, Music, ChevronRight, Clock, ScanLine,
+} from "lucide-react"
 
 export default async function EventPage({
   params,
@@ -27,9 +18,7 @@ export default async function EventPage({
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/login")
 
   const anyClient = supabase as any
@@ -42,111 +31,123 @@ export default async function EventPage({
 
   if (!event) notFound()
 
-  const [{ count: totalInvited }, { count: totalCheckedIn }, { count: totalGuests }] =
+  const [{ count: totalInvited }, { count: totalCheckedIn }, { data: songAgg }] =
     await Promise.all([
       anyClient.from("event_invitations").select("*", { count: "exact", head: true }).eq("event_id", id),
       anyClient.from("event_checkins").select("*", { count: "exact", head: true }).eq("event_id", id),
-      anyClient.from("event_users").select("*", { count: "exact", head: true }).eq("event_id", id).eq("role", "guest"),
-    ]) as [{ count: number | null }, { count: number | null }, { count: number | null }]
+      anyClient.from("event_song_suggestions").select("id,song_status").eq("event_id", id),
+    ])
 
-  const statusColor = STATUS_COLOR[event.event_status] ?? STATUS_COLOR.draft
-  const statusLabel = STATUS_LABEL[event.event_status] ?? event.event_status
+  const songList = (songAgg ?? []) as { id: string; song_status: string }[]
+  const approvedSongs = songList.filter((s) =>
+    s.song_status === "approved" || s.song_status === "added_to_playlist"
+  ).length
 
   return (
-    <div className="space-y-5 pb-8">
-      {/* Status + description */}
-      <div className="flex items-center gap-2">
-        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusColor}`}>
-          {statusLabel}
-        </span>
-      </div>
-
+    <div className="space-y-6 fade-in">
+      {/* Description */}
       {event.description && (
-        <p className="text-sm text-neutral-400 leading-relaxed">{event.description}</p>
+        <p className="text-sm leading-relaxed text-neutral-300">{event.description}</p>
       )}
 
-      {/* Info cards */}
-      <div className="space-y-2">
+      {/* Date & location cards */}
+      <div className="grid gap-2">
         {event.starts_at && (
-          <div className="flex items-center gap-3 rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-3">
-            <CalendarDays size={18} className="text-violet-400 shrink-0" />
-            <div className="text-sm">
-              <p className="text-neutral-100">
-                {new Date(event.starts_at).toLocaleDateString("es-MX", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </p>
-              <p className="text-neutral-400">
-                {new Date(event.starts_at).toLocaleTimeString("es-MX", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-                {event.ends_at &&
-                  " – " +
-                    new Date(event.ends_at).toLocaleTimeString("es-MX", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-              </p>
-            </div>
-          </div>
+          <InfoRow icon={CalendarDays} accent="violet">
+            <p className="text-sm font-medium text-neutral-100">
+              {new Date(event.starts_at).toLocaleDateString("es-MX", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </p>
+            <p className="flex items-center gap-1 text-xs text-neutral-500">
+              <Clock size={10} />
+              {new Date(event.starts_at).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })}
+              {event.ends_at && (
+                <> – {new Date(event.ends_at).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })}</>
+              )}
+            </p>
+          </InfoRow>
         )}
 
         {(event.venue_name || event.city) && (
-          <div className="flex items-center gap-3 rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-3">
-            <MapPin size={18} className="text-violet-400 shrink-0" />
-            <div className="text-sm">
-              {event.venue_name && <p className="text-neutral-100">{event.venue_name}</p>}
-              {event.city && <p className="text-neutral-400">{event.city}</p>}
-            </div>
-          </div>
+          <InfoRow icon={MapPin} accent="pink">
+            {event.venue_name && (
+              <p className="text-sm font-medium text-neutral-100">{event.venue_name}</p>
+            )}
+            {event.city && <p className="text-xs text-neutral-500">{event.city}</p>}
+          </InfoRow>
         )}
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
-        {[
-          { label: "Invitados", value: totalInvited ?? 0, icon: Users },
-          { label: "Check-in", value: totalCheckedIn ?? 0, icon: QrCode },
-          { label: "Confirmados", value: totalGuests ?? 0, icon: Users },
-        ].map(({ label, value, icon: Icon }) => (
-          <div
-            key={label}
-            className="rounded-xl bg-neutral-900 border border-neutral-800 p-4 text-center"
-          >
-            <Icon size={20} className="mx-auto mb-1 text-violet-400" />
-            <p className="text-2xl font-bold text-neutral-100">{value}</p>
-            <p className="text-xs text-neutral-500">{label}</p>
-          </div>
-        ))}
-      </div>
+      <section className="space-y-3">
+        <SectionHeader label="Resumen" />
+        <div className="grid grid-cols-3 gap-2.5">
+          <StatCard icon={Users}   label="Invitados" value={totalInvited ?? 0}   accent="violet" />
+          <StatCard icon={QrCode}  label="Check-in"  value={totalCheckedIn ?? 0} accent="green"  />
+          <StatCard icon={Music}   label="Canciones" value={approvedSongs}       accent="pink"   />
+        </div>
+      </section>
 
       {/* Quick actions */}
-      <div>
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-500">
-          Acciones rápidas
-        </p>
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { href: `/events/${id}/invitations`, icon: QrCode, label: "Gestionar invitaciones" },
-            { href: `/events/${id}/checkin`, icon: Users, label: "Scanner check-in" },
-            { href: `/events/${id}/gifts`, icon: Gift, label: "Lista de regalos" },
-            { href: `/events/${id}/songs`, icon: Music, label: "Playlist colaborativa" },
-          ].map(({ href, icon: Icon, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className="flex items-center gap-3 rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-3.5 text-sm text-neutral-300 transition hover:border-violet-700 hover:text-neutral-100 active:scale-[0.97]"
-            >
-              <Icon size={18} className="text-violet-400 shrink-0" />
-              {label}
-            </Link>
-          ))}
+      <section className="space-y-3">
+        <SectionHeader label="Acciones rápidas" />
+        <div className="grid grid-cols-2 gap-2.5">
+          <QuickAction href={`/events/${id}/invitations`} icon={QrCode}   label="Invitaciones" />
+          <QuickAction href={`/events/${id}/checkin`}     icon={ScanLine} label="Scanner QR" />
+          <QuickAction href={`/events/${id}/gifts`}       icon={Gift}     label="Lista de regalos" />
+          <QuickAction href={`/events/${id}/songs`}       icon={Music}    label="Playlist" />
         </div>
-      </div>
+      </section>
     </div>
   )
 }
+
+function InfoRow({
+  icon: Icon,
+  accent,
+  children,
+}: {
+  icon: React.ElementType
+  accent: "violet" | "pink"
+  children: React.ReactNode
+}) {
+  const iconBg = accent === "violet"
+    ? "bg-violet-600/15 text-violet-400 ring-violet-500/20"
+    : "bg-pink-600/15 text-pink-400 ring-pink-500/20"
+  return (
+    <div className="card flex items-center gap-3 p-4">
+      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 ${iconBg}`}>
+        <Icon size={17} />
+      </div>
+      <div className="min-w-0 flex-1 space-y-0.5">{children}</div>
+    </div>
+  )
+}
+
+function QuickAction({
+  href,
+  icon: Icon,
+  label,
+}: {
+  href: string
+  icon: React.ElementType
+  label: string
+}) {
+  return (
+    <Link
+      href={href}
+      className="card card-hover group flex items-center gap-3 px-4 py-3.5"
+    >
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl icon-badge">
+        <Icon size={16} className="text-violet-300" />
+      </div>
+      <span className="flex-1 text-sm font-medium text-neutral-200">{label}</span>
+      <ChevronRight size={14} className="text-neutral-600 transition group-hover:text-violet-400 group-hover:translate-x-0.5" />
+    </Link>
+  )
+}
+
