@@ -17,7 +17,7 @@ export function EventTabs({ eventId }: { eventId: string }) {
   const base = `/events/${eventId}`
 
   return (
-    <div className="flex overflow-x-auto scrollbar-hide px-4 gap-1">
+    <div className="flex items-center gap-1.5">
       {TABS.map(({ href, icon: Icon, label }) => {
         const full = `${base}${href}`
         const active = href === "" ? pathname === full : pathname === full || pathname.startsWith(full + "/")
@@ -26,18 +26,19 @@ export function EventTabs({ eventId }: { eventId: string }) {
           <Link
             key={href}
             href={full}
-            className={`flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-medium whitespace-nowrap transition ${
+            aria-label={label}
+            title={label}
+            className={`group relative flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-medium whitespace-nowrap transition-all ${
               active
-                ? "bg-violet-600/20 text-violet-300 ring-1 ring-violet-500/30 shadow-[0_0_20px_-4px_rgba(139,92,246,0.5)]"
-                : "text-neutral-500 hover:text-neutral-200 hover:bg-neutral-800/60"
+                ? "flex-[2] bg-violet-600/20 text-violet-300 ring-1 ring-violet-500/30 shadow-[0_0_20px_-4px_rgba(139,92,246,0.5)] px-3"
+                : "flex-1 text-neutral-500 hover:text-neutral-200 hover:bg-neutral-800/60 px-2"
             }`}
           >
-            <Icon size={13} />
-            {label}
+            <Icon size={14} />
+            {active && <span className="truncate">{label}</span>}
           </Link>
         )
       })}
-      <div className="shrink-0 w-4" aria-hidden />
     </div>
   )
 }
