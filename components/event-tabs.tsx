@@ -17,7 +17,7 @@ export function EventTabs({ eventId }: { eventId: string }) {
   const base = `/events/${eventId}`
 
   return (
-    <div className="-mx-1 flex overflow-x-auto scrollbar-hide">
+    <div className="flex overflow-x-auto scrollbar-hide px-4 gap-1">
       {TABS.map(({ href, icon: Icon, label }) => {
         const full = `${base}${href}`
         const active = href === "" ? pathname === full : pathname === full || pathname.startsWith(full + "/")
@@ -37,6 +37,7 @@ export function EventTabs({ eventId }: { eventId: string }) {
           </Link>
         )
       })}
+      <div className="shrink-0 w-4" aria-hidden />
     </div>
   )
 }
