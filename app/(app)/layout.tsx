@@ -15,7 +15,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="relative flex min-h-dvh flex-col pt-safe">
-      <main className="flex-1 pb-32">{children}</main>
+      <main className="flex-1 pb-40">{children}</main>
       <BottomNav />
     </div>
   )
