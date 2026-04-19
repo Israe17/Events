@@ -64,10 +64,12 @@ export default async function EventLayout({
   return (
     <div>
       {/* Gradient header */}
-      <div className="relative overflow-hidden">
+      <div className="relative">
         {/* Gradient background */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-violet-600/25 via-fuchsia-600/10 to-transparent" />
-        <div className="pointer-events-none absolute -top-24 left-1/2 h-48 w-[120%] -translate-x-1/2 rounded-full bg-violet-600/15 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-violet-600/25 via-fuchsia-600/10 to-transparent" />
+          <div className="absolute -top-24 left-1/2 h-48 w-[120%] -translate-x-1/2 rounded-full bg-violet-600/15 blur-3xl" />
+        </div>
 
         <div className="relative px-4 pb-4 pt-6 space-y-4">
           {/* Back + title */}
