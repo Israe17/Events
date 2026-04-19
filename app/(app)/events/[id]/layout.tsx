@@ -109,8 +109,10 @@ export default async function EventLayout({
             </div>
           </div>
 
-          {/* Tabs */}
-          <EventTabs eventId={id} />
+          {/* Tabs — full-bleed scroll so last tab isn't clipped */}
+          <div className="-mx-4">
+            <EventTabs eventId={id} />
+          </div>
         </div>
       </div>
 
