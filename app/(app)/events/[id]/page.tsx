@@ -6,7 +6,7 @@ import type { Tables } from "@/types/supabase"
 import { StatCard } from "@/components/ui/stat-card"
 import { SectionHeader } from "@/components/ui/section-header"
 import {
-  CalendarDays, MapPin, QrCode, Users, Gift, Music, ChevronRight, Clock, ScanLine,
+  CalendarDays, MapPin, QrCode, Users, Gift, Music, ChevronRight, Clock, ScanLine, Shirt,
 } from "lucide-react"
 
 export default async function EventPage({
@@ -98,6 +98,7 @@ export default async function EventPage({
         <div className="grid grid-cols-2 gap-2.5">
           <QuickAction href={`/events/${id}/invitations`} icon={QrCode}   label="Invitaciones" />
           <QuickAction href={`/events/${id}/checkin`}     icon={ScanLine} label="Scanner QR" />
+          <QuickAction href={`/events/${id}/dress-code`}  icon={Shirt}    label="Dress code" />
           <QuickAction href={`/events/${id}/gifts`}       icon={Gift}     label="Lista de regalos" />
           <QuickAction href={`/events/${id}/songs`}       icon={Music}    label="Playlist" />
         </div>
