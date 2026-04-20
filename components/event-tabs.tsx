@@ -2,12 +2,13 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, QrCode, ScanLine, Gift, Music } from "lucide-react"
+import { LayoutDashboard, QrCode, ScanLine, Gift, Music, Shirt } from "lucide-react"
 
 const TABS = [
   { href: "",             icon: LayoutDashboard, label: "Resumen" },
   { href: "/invitations", icon: QrCode,          label: "Invitaciones" },
   { href: "/checkin",     icon: ScanLine,        label: "Check-in" },
+  { href: "/dress-code",  icon: Shirt,           label: "Dress code" },
   { href: "/gifts",       icon: Gift,            label: "Regalos" },
   { href: "/songs",       icon: Music,           label: "Canciones" },
 ]
